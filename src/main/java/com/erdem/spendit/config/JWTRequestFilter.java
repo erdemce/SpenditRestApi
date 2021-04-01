@@ -18,6 +18,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.erdem.spendit.service.TokenManagementService;
 import io.jsonwebtoken.ExpiredJwtException;
 
+
+/**
+ * This class is as a AuthenticationFilter in spring security Responsible for filtering the authentication tokens in requests
+ * @author Erdem Taskin
+ *
+ */
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
 
@@ -59,17 +65,16 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
 			UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
-		// if token is valid configure Spring Security to manually set authentication
+			// if token is valid configure Spring Security to manually set authentication
+			// We have got a list of all active logged in user in memory, we check this too, to be sure that this user didn't log out. 
 			if (tokenManagementService.checkActiveJWTToken(email,jwtToken)&&jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-				
-
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
 				usernamePasswordAuthenticationToken
 						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-		// After setting the Authentication in the context, we specify
-		// that the current user is authenticated. So it passes the
-		// Spring Security Configurations successfully.
+			// After setting the Authentication in the context, we specify
+			// that the current user is authenticated. So it passes the
+			// Spring Security Configurations successfully.
 				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 			}
 		}

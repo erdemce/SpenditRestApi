@@ -56,11 +56,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	/**
-	 * By overriding this function, 1. disable csrf 2. disable cross origins 3.
-	 * disable logout, because when we use JWT we should handle logout in another
-	 * way 4. make API Stateless 5. configure JWTRequestFilter as
-	 * AuthenticationFilter 6. configure JwtAuthEntryPoint as Authentication Entry
-	 * point
+	 * By overriding this function, 
+	 * 1. disable csrf 
+	 * 2. disable cross origins 
+	 * 3. disable logout, because when we use JWT we should handle logout in another way 
+	 * 4. make API Stateless 
+	 * 5. configure JWTRequestFilter as AuthenticationFilter
+	 * 6. configure JwtAuthEntryPoint as Authentication Entrypoint
 	 */
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {

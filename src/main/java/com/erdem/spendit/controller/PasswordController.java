@@ -24,7 +24,12 @@ public class PasswordController {
 
 	@Autowired
 	private TokenManagementService tokenManagementService;
-
+	
+	/**
+	 * Private end point to change the password
+	 * @param changePasswordRequest
+	 * @return
+	 */
 	@PostMapping("/auth/change_password")
 	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
 		User loginUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -35,9 +40,17 @@ public class PasswordController {
 			return new ResponseEntity<>("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
+	
+	/**
+	 * Public end point for the user to get a link with 15 minutes valid reset password UUID token.
+	 * After getting this link; in front end this token should be used and
+	 * post with the reset-password request in request body to be able to reset password without old one.
+	 * @param authRequest
+	 * @return
+	 */
 	@PostMapping("/public/forgot_password")
-	public ResponseEntity<?> sendResetPasswordValidationLink(@RequestBody AuthRequest authRequest) throws Exception {
+	public ResponseEntity<?> sendResetPasswordValidationLink(@RequestBody AuthRequest authRequest){
 
 		if (userService.hasAlreadyRegistered((authRequest.getEmail()))) {
 			String uuid = UUID.randomUUID().toString();
@@ -48,7 +61,12 @@ public class PasswordController {
 			return new ResponseEntity<>("There is no account related to this email", HttpStatus.NOT_FOUND);
 		}
 	}
-
+	
+	/**
+	 * Public end point to reset the password but only with the Reset Password UUID Token.
+	 * @param resetPasswordRequest: includes UUID Token and new Password
+	 * @throws Exception if there is no such UUID token or it is expired 
+	 */
 	@PostMapping("/public/reset_password")
 	public ResponseEntity<?> resetPasswordWithToken(@RequestBody ResetPasswordRequest resetPasswordRequest)
 			throws Exception {

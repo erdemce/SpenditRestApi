@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 		if (user != null) {
 			user.get().setPassword(new BCryptPasswordEncoder().encode(resetPasswordRequest.getNewPassword()));
 		} else {
-			throw new UsernameNotFoundException("This Email can not be found");
+			throw new BadCredentialsException("Email or your UUID token is wrong");
 		}
 
 	}

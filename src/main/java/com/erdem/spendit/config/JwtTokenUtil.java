@@ -22,39 +22,41 @@ public class JwtTokenUtil implements Serializable {
 
 	@Value("${jwt.secret}")
 	private String secret;
-
+	
+	
 	public String getEmailFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
-//retrieve expiration date from jwt token
+	
 	public Date getExpirationDateFromToken(String token) {
 		return getClaimFromToken(token, Claims::getExpiration);
 	}
-
+	
+	
 	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
 	}
 
-//for retrieving any information from token we will need the secret key
+	//to retrieve any information from token we will need the secret key
 	private Claims getAllClaimsFromToken(String token) {
 		return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 	}
 
-//check if the token has expired
+	//check if the token has expired
 	public Boolean isTokenExpired(String token) {
 		final Date expiration = getExpirationDateFromToken(token);
 		return expiration.before(new Date());
 	}
 
-//generate auth token for user; 1 hour valid
+	//generate auth token for user; 1 hour valid
 	public String generateToken(UserDetails userDetails) {
 		return doGenerateToken(userDetails.getUsername());
 	}
 
-//while creating the token we are defining  claims of the token like Issue time, Expiration time and Subject
-//we are signing the JWT using the HS512 algorithm and secret key.
+	//while creating the token we are defining  claims of the token like Issue time, Expiration time and Subject
+	//we are signing the JWT using the HS512 algorithm and secret key.
 	private String doGenerateToken(String subject) {
 		Map<String, Object> claims = new HashMap<>();
 
@@ -63,7 +65,7 @@ public class JwtTokenUtil implements Serializable {
 				.signWith(SignatureAlgorithm.HS512, secret).compact();
 	}
 
-//validate token
+	//validate token
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = getEmailFromToken(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
